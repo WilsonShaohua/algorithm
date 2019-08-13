@@ -1,0 +1,127 @@
+
+typedef struct Node{
+	int val;
+	Node *next;	
+};
+
+typedef struct{
+	Node *head=NULL;
+	Node *tail=NULL;
+	const int MAX_LENGTH = 1e6+10;
+	bool add(int value){
+		if(head==NULL){
+			head = new Node();
+			tail = head;
+			head->val=0;
+		
+		}
+		if(head->val>=MAX_LENGTH){
+			return false;
+		}
+		Node *newNode = new Node();
+		newNode->val=value;
+		newNode->next=NULL;
+		tail->next = newNode;
+		tail=tail->next;
+		head->val++;
+		return true;
+	}
+	bool add(int value,int location){
+		if(location>head->val || location<=0){
+			return false;
+		}
+		head->val++;
+		Node *newNode = new Node();
+		newNode->val = value;
+		newNode->next = NULL;
+		if(location==head->val){		
+			tail->next = newNode;
+			tail = tail->next;
+			return true;
+		}
+		Node *cur = head;
+		for(int i=1;i<location;i++){
+			cur = cur->next;
+		}
+		newNode->next = cur->next;
+		cur->next = newNode;
+		return true;
+	}
+	
+	bool addAll(int *values,int length){
+		if(head==NULL || length<=0){
+			head = new Node();
+			head->val=0;
+			tail = head;
+		}
+		if(head->val + length>=MAX_LENGTH){
+			return false;
+		}
+		for(int i=0;i<length;i++){
+			Node *newNode = new Node();
+			newNode->val = values[i];
+			newNode->next = NULL;
+			tail->next = newNode;
+			tail = tail->next;			
+		}
+		head->val=head->val + length;
+		return true;
+	}
+	
+	bool removeLocation(int location){
+		if(location>=head->val || location<=0){
+			return false;
+		}
+		head->val--;
+		Node *cur = head;
+		Node *front = NULL;
+		for(int i=0;i<location;i++){			
+			cur=cur->next;
+		}
+		if(location==head->val){
+			tail=cur;
+		}
+		Node *drop = cur->next;
+		cur->next = drop->next;
+		delete drop;
+		return true;
+	}
+	void removeValue(int value){
+		int length = head->val;
+		Node *cur = head;
+		while(cur->next!=NULL){
+			if(cur->next->val == value){
+				Node *drop = cur->next;
+				tail = cur;
+				cur->next = drop->next;
+				delete drop;
+			}
+		}
+	}
+	
+	bool isEmpty(){
+		return (head==NULL) || (head->val==0);
+	}
+	
+	void clear(){
+		Node *cur = head;
+		Node *drop;
+		while(cur!=NULL){
+			drop = cur;
+			cur = cur->next;
+			delete drop;
+		}
+		head=tail=NULL;
+	}
+	
+	int get(int location){
+		if(location>head->val || location<=0){
+			return 0x3f3f3f3f3f;
+		}
+		Node *cur = head;
+		for(int i=0;i<location;i++){
+			cur=cur->next;
+		}
+		return cur->val;
+	}
+}LinkedList;
