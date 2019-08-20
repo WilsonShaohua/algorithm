@@ -1,60 +1,52 @@
-//https://www.luogu.org/problem/P1091
-
+/*
+è½¬ç§»æ–¹ç¨‹ï¼š
+	f[i]=f[i+1]+1   ç¬¬iå„æ•°æ®çš„å€¼ä¸ºä¸Šä¸€ä¸ªå€¼çš„ç©ºé—²æ—¶é—´+1
+	f[i] = max(f[i],f[i+r[num].last] å½“å‰æ—¶é—´æœ‰ä»»åŠ¡ä¸‹è¾¾ï¼Œåˆ¤æ–­ä»»åŠ¡å®Œæˆæ—¶é—´çš„ç»“æŸæ—¶é—´åé‚£ä¸ªå€¼çš„ç©ºé—²æ—¶é—´æ›´å¤š
+ä»åå‘å‰éå†æŸ¥æ‰¾
+return f[1]
+*/
 #include<iostream>
-#include<cstdio>
 #include<algorithm>
 using namespace std;
-const int MAXN=1e3+7;
-int a[MAXN],d1[MAXN],d2[MAXN],n;
-#define INF 0x7fffffff
+const int MAXN=1e4+7;
+int n,k;
+int f[MAXN],sum[MAXN];
 
-void list1(){
-	int f[MAXN];
-	int len=1;
-	f[1]=a[1];
-	d1[1]=1;
-	for(int i=2;i<=n;i++){
-		if(f[len]<a[i]){
-			f[++len]=a[i];
-		}else{
-			f[lower_bound(f+1,f+1+len,a[i]) - f]=a[i];
-		}
-		d1[i]=len;
-	}
+struct ren{
+	int start;
+	int last;
+};
+ren r[MAXN];
+
+
+inline  int cmp(ren r1,ren r2){
+	return r1.start >r2.start;
 }
-
-void list2(){
-	int f[MAXN];
-	int len=1;
-	f[1]=a[n];	
-	for(int i=n-1;i>=1;i--){
-		if(f[len]<a[i]){
-			f[++len]=a[i];
-		}else{
-			/*
-			lower_bound(start,end,value,|operator|) 
-			²ÎÊıÀàĞÍÓësort·½·¨µÄ²ÎÊıÀàËÆ 
-			×÷ÓÃÊÇÕÒµ½²ÎÊıÖĞµÄµØÖ·Çø¼äÄÚµÚÒ»¸öĞ¡ÓÚµÈÓÚvalueµÄµØÖ·
-			·µ»ØµØÖ· 
-			*/ 
-			f[lower_bound(f+1,f+1+len,a[i]) - f]=a[i];			
-		}
-		d2[i]=len;
-	}
-}
-
 
 int main(){
-	cin>>n;
-	for(int i=1;i<=n;i++){
-		cin>>a[i];
+	cin>>n>>k;
+	for(int i=1;i<=k;i++){
+	cin>>r[i].start;
+		cin>>r[i].last;
+		sum[r[i].start]++;
 	}
-	list1();
-	list2();
-	int ans=INF;	
-	for(int i=1;i<=n;i++){
-		ans=min(ans,n-d1[i] - d2[i+1]);
+	int num=1;
+	sort(r+1,r+k+1,cmp);
+	
+	for(int i=n;i>=1;i--){
+		if(sum[i]==0){
+			f[i]=f[i+1] + 1;
+		}else{
+			for(int j=1;j<=sum[i];j++){
+				if(f[i + r[num].last] > f[i]){
+					f[i] = f[i+r[num].last];					
+				}
+				num++;
+			}
+		}
 	}
-	printf("%d",ans);
+	
+	printf("%d",f[1]);
+	
 	return 0;
 }
